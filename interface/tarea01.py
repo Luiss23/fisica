@@ -116,8 +116,22 @@ def helice_circular_1():
     plt.show()
     pass
 def Corona_Sinusoidal():
-    # añadir sus códigos aca
+    '''    INTEGRANTES GRUPO:
+
+          _Luis Soto Zelada (@Luiss23)
+          _Diego Rojas (@diegoskky)
+          _Lucia Vilches (@luciavj)
+          grafica una corona sinusoidal en un plano cartesiano
+          De la forma  f(x)=2sen(pi * x)'''
+    Fs: int = 80  # corresponde al limite de la funcion en un ciclo
+    f: float = 1  # cantidad de unidades del eje y
+    sample: int = 80
+    x = np.arange(sample)
+    y = np.sin(2 * np.pi * f * x / Fs)
+    plt.plot(x, y)
+    plt.show()
     pass
+
 def curva_de_viviani():
     # añadir sus códigos aca
     pass
