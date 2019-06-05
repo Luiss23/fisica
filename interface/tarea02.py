@@ -14,6 +14,41 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # Corona Sinusoidal
 
+""" 
+CORONA SINUSOIDAL ANIMADA MEDIANTE MATPLOTLIB
+    
+Integrantes:
+_Luis Soto Zelada (@Luiss23)
+_Diego Rojas (@diegoskky)
+_Lucia Vilches (@luciavj)
+    
+    """
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+X = np.linspace(0, 2 * np.pi, 100)
+Y = np.sin(X)         #definimos datos compuestos para x,y
+
+fig, ax = plt.subplots(1, 1)
+ax.set_xlim([0, 2 * np.pi])
+ax.set_ylim([-1.1, 1.1])
+ax.set_title("Corona Sinusoidal")
+
+sinusoide, = ax.plot([], [])   #definimos escenario
+punto, = ax.plot([], [], 'o', color='red')
+
+def sine(i):
+    sinusoide.set_data(X[:i], Y[:i])
+    punto.set_data(X[i], Y[i])      #se define la curva o sinusoide
+
+
+anim = animation.FuncAnimation(fig, sine, frames=len(X), interval=50)  #Animar la curva mediante animacion matplotlib
+plt.show()
+
+pass
+
+
 # Curva de Viviani
 
 # Hipopoda
