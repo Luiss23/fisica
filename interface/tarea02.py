@@ -15,7 +15,7 @@ from mpl_toolkits.mplot3d import Axes3D
 # Corona Sinusoidal
 
 """ 
-    CORONA SINUSOIDAL ANIMADA MEDIANTE MATPLOTLIB
+     CORONA SINUSOIDAL ANIMADA MEDIANTE MATPLOTLIB
     
     Integrantes:
         _Luis Soto Zelada (@Luiss23)
