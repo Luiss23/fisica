@@ -1,0 +1,149 @@
+import tkinter as tk
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import animation
+from tkinter import *
+
+def iniciar(a=1,t=13,inicio="ON",contador=0,presionado="vacio"):
+	ventana = Tk()
+	ventana.title("Curva Sinusoidal")
+	ventana.resizable(0,0)
+	ventana.geometry("900x900")
+	tk_ventana = Frame(ventana,width=900,height=100).place(x=0,y=0)
+	botones = Frame(ventana,width=250,height=800).place(x=0,y=100)
+	grafico = Frame(ventana,width=650,height=800).place(x=250,y=100)
+	Label(tk_ventana,text="Curva Sinusoidal",font=(50)).place(x=400,y=50)
+	Button(tk_ventana,text="<",font=(50),command=lambda:salir_curva(ventana)).place(x=50,y=50)
+	Label(tk_ventana,text="Animacion",font=(50)).place(x=710,y=50)
+	Button(tk_ventana,text="ON",command=lambda:reiniciar(ventana,entry_a,entry_t,"ON",contador,presionado)).place(x=830,y=50)
+	Button(tk_ventana,text="OFF",command=lambda:reiniciar(ventana,entry_a,entry_t,"OFF",contador,presionado)).place(x=860,y=50)
+	Button(botones,text="Posicion",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Posicion")).place(x=50,y=136)
+	Button(botones,text="Velocidad",width=28,height=3,command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Velocidad")).place(x=50,y=212)
+	Button(botones,text="Velocidad media",width=28,height=3,command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Velocidad media")).place(x=50,y=288)
+	Button(botones,text="Aceleracion",width=28,height=3,command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Aceleracion")).place(x=50,y=364)
+	Button(botones,text="Aceleracion media",width=28,height=3,command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Aceleracion media")).place(x=50,y=440)
+	Button(botones,text="Curvatura",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Curvatura")).place(x=50,y=516)
+	Button(botones,text="Radio de curvatura",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Radio de curvatura")).place(x=50,y=592)
+	Button(botones,text="Torsion",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Torsion")).place(x=50,y=668)
+	Button(botones,text="Radio de torsion",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Radion de torsion")).place(x=50,y=744)
+	Button(botones,text="Longitud de arco",width=28,height=3,state="disabled",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,"Longitud")).place(x=50,y=823)
+	entry_a = StringVar()
+	entry_a.set("")
+	entry_t = StringVar()
+	entry_t.set("")
+
+	if contador != 0:
+		entry_a.set(a)
+		entry_t.set(t)
+		a,t = error(a,t)
+
+	Entry(grafico,textvariable=entry_a,width=12,justify="center").place(x=333,y=823)
+	Label(grafico,text="a=",font=(35)).place(x=303,y=823)
+	Entry(grafico,textvariable=entry_t,width=12,justify="center").place(x=616,y=823)
+	Label(grafico,text="t=",font=(35)).place(x=589,y=823)
+	Button(grafico,text="Graficar",command=lambda:reiniciar(ventana,entry_a,entry_t,inicio,contador,presionado)).place(x=800,y=823)
+
+	if presionado != "vacio":
+
+		Label(grafico,text=presionado).place(x=400,y=744)
+		resultado = operacion(presionado,a,t)
+		Label(grafico,text=resultado).place(x=450,y=744)
+
+
+	fig = plt.figure()
+	canvas = FigureCanvasTkAgg(fig,ventana)
+	canvas.get_tk_widget().place(x=255.,y=212)
+	canvas._tkcanvas.place(x=255.,y=212)
+	grafico = Axes3D(fig)
+	grafico.set_xlabel('X')
+	grafico.set_ylabel('Y')
+	grafico.set_zlabel('Z')
+
+	if t == 0:
+		t = np.linspace(-0.1, t,60)
+
+	else:
+
+		t = np.linspace(0, t,60)
+
+	w = 4
+	p = 3
+	A = 1
+	x = np.linspace(0, 2*np.pi,100)
+	y =x*0
+	z = A * np.sin(w*x + p)
+	lista = [x,y,z]
+	ejes = np.array(lista)
+
+	if inicio == "ON":
+		linea, = grafico.plot(x, y, z, 'b', label="Curva Sinusoidal", lw=1)
+		animacion = animation.FuncAnimation(fig, instrucciones, fargs=(ejes, linea),frames=60,interval=16.6, blit=False)
+	else:
+		linea, = grafico.plot(x, y, z, 'b', label="Curva Sinusoidal", lw=1)
+	ventana.mainloop()
+
+def salir_curva(ventana):
+    ventana.destroy()
+
+def reiniciar(ventana,entry_a,entry_t,inicio,contador,presionado):
+	entry_a.set(entry_a.get())
+	entry_t.set(entry_t.get())
+	a = str(entry_a.get())
+	t = str(entry_t.get())
+	contador = contador + 1
+	salir_curva(ventana)
+	iniciar(a,t,inicio,contador,presionado)
+
+def instrucciones(num, ejes, linea):
+    linea.set_data(ejes[:2, :num])
+    linea.set_3d_properties(ejes[2, :num])
+
+def error(a,t):
+	if a == "":
+		a = 1
+	else:
+		if "," in a or "." in a:
+			a = a.replace(",",".")
+			a = float(a)
+		else:
+			a = int(a)
+	if t == "":
+		t = 13
+	else:
+		if "," in t or "." in t:
+			t = t.replace(",",".")
+			t = float(t)
+		else:
+			t = int(t)
+	return a,t
+
+def operacion(presionado,a,t):
+	if presionado == "Velocidad":
+		x = np.linspace(0, 2*np.pi,100)
+		y =x*0
+		z = A*w * np.cos(w*x + p)
+		eje = "(" + x + " , " + y + " , "+ z + ")"
+	elif presionado == "Aceleracion":
+		x = np.linspace(0, 2*np.pi,100)
+		y =x*0
+		z = -(A*w)**2*( np.sin(w*x + p))
+		eje = "(" + x + " , " + y + " , "+ z + ")"
+	#elif presionado == "Velocidad media":
+	#elif presionado == "Aceleracion media":
+	#elif presionado == "Posicion":
+	#elif presionado == "curvatura":
+	#elif presionado == "radio de curvatura":
+	#elif presionado == "torsion":
+	#elif presionado == "radio de torsion":
+	#elif presionado == "longitud de arco":
+	else:
+		eje = " "
+	return eje
+
+_name_ = "_main_"
+if _name_ == "_main_":
+	 iniciar()
